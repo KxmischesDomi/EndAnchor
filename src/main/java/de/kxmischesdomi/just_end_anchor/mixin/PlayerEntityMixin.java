@@ -36,7 +36,7 @@ public abstract class PlayerEntityMixin {
 		if (block instanceof EndAnchorBlock && blockState.get(EndAnchorBlock.CHARGES) > 0 && EndAnchorBlock.isEnd(world)) {
 			Optional<Vec3d> optional = EndAnchorBlock.findRespawnPosition(EntityType.PLAYER, world, pos);
 			if (!bl2 && optional.isPresent()) {
-				world.setBlockState(pos, blockState.with(EndAnchorBlock.CHARGES, blockState.get(EndAnchorBlock.CHARGES) - 1), Block.NOTIFY_ALL);
+				world.setBlockState(pos, blockState.with(EndAnchorBlock.CHARGES, blockState.get(EndAnchorBlock.CHARGES) - 1), 3);
 			}
 
 			cir.setReturnValue(optional);

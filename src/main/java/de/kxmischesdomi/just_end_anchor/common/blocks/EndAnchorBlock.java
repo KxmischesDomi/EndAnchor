@@ -5,7 +5,6 @@ import com.google.common.collect.ImmutableList.Builder;
 import com.google.common.collect.Lists;
 import com.google.common.collect.UnmodifiableIterator;
 import de.kxmischesdomi.just_end_anchor.common.entities.EndAnchorBlockEntity;
-import de.kxmischesdomi.just_end_anchor.common.registry.ModBlockEntities;
 import de.kxmischesdomi.just_end_anchor.common.registry.ModBlocks;
 import net.minecraft.block.*;
 import net.minecraft.block.dispenser.FallibleItemDispenserBehavior;
@@ -38,7 +37,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.Explosion.DestructionType;
 import net.minecraft.world.explosion.ExplosionBehavior;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
@@ -69,7 +67,7 @@ public class EndAnchorBlock extends Block implements BlockEntityProvider {
 			return ActionResult.PASS;
 		} else if (isChargeItem(itemStack) && canCharge(state)) {
 			charge(world, pos, state);
-			if (!player.getAbilities().creativeMode) {
+			if (!player.abilities.creativeMode) {
 				itemStack.decrement(1);
 			}
 
@@ -97,7 +95,7 @@ public class EndAnchorBlock extends Block implements BlockEntityProvider {
 	}
 
 	private static boolean isChargeItem(ItemStack stack) {
-		return stack.isOf(Items.ENDER_PEARL);
+		return stack.getItem() == Items.ENDER_PEARL;
 	}
 
 	private static boolean canCharge(BlockState state) {
@@ -146,8 +144,8 @@ public class EndAnchorBlock extends Block implements BlockEntityProvider {
 				EndermiteEntity endermiteEntity = new EndermiteEntity(EntityType.ENDERMITE, world);
 				spawnedEndermites.add(endermiteEntity);
 				endermiteEntity.setPos(explodedPos.getX() + 0.5, explodedPos.getY(), explodedPos.getZ() + 0.5);
-				endermiteEntity.setYaw(0);
-				endermiteEntity.setPitch(0);
+				endermiteEntity.setBodyYaw(0);
+				endermiteEntity.pitch = 0;
 				endermiteEntity.setVelocity(new Vec3d(world.random.nextDouble() * (world.random.nextBoolean() ? -1 : 1), world.random.nextDouble(), world.random.nextDouble() * (world.random.nextBoolean() ? -1 : 1)));
 				world.spawnEntity(endermiteEntity);
 			}
@@ -161,7 +159,7 @@ public class EndAnchorBlock extends Block implements BlockEntityProvider {
 	}
 
 	public static void charge(World world, BlockPos pos, BlockState state) {
-		world.setBlockState(pos, state.with(CHARGES, state.get(CHARGES) + 1), Block.NOTIFY_ALL);
+		world.setBlockState(pos, state.with(CHARGES, state.get(CHARGES) + 1), 3);
 		world.playSound(null, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, SoundEvents.BLOCK_RESPAWN_ANCHOR_CHARGE, SoundCategory.BLOCKS, 1.0F, 1.0F);
 	}
 
@@ -210,7 +208,7 @@ public class EndAnchorBlock extends Block implements BlockEntityProvider {
 
 	private static Optional<Vec3d> findRespawnPosition(EntityType<?> entity, CollisionView world, BlockPos pos, boolean bl) {
 		BlockPos.Mutable mutable = new BlockPos.Mutable();
-		UnmodifiableIterator var5 = VALID_SPAWN_OFFSETS.iterator();
+		UnmodifiableIterator<Vec3i> var5 = VALID_SPAWN_OFFSETS.iterator();
 
 		Vec3d vec3d;
 		do {
@@ -220,7 +218,7 @@ public class EndAnchorBlock extends Block implements BlockEntityProvider {
 
 			Vec3i vec3i = (Vec3i)var5.next();
 			mutable.set(pos).move(vec3i);
-			vec3d = Dismounting.findRespawnPos(entity, world, mutable, bl);
+			vec3d = Dismounting.method_30769(entity, world, mutable, bl);
 		} while(vec3d == null);
 
 		return Optional.of(vec3d);
@@ -235,21 +233,20 @@ public class EndAnchorBlock extends Block implements BlockEntityProvider {
 		return PistonBehavior.BLOCK;
 	}
 
-	@Nullable
 	@Override
-	public BlockEntity createBlockEntity(BlockPos pos, BlockState state) {
-		return new EndAnchorBlockEntity(ModBlockEntities.END_ANCHOR, pos, state);
+	public BlockEntity createBlockEntity(BlockView world) {
+		return new EndAnchorBlockEntity();
 	}
 
 	static {
 		CHARGES = Properties.CHARGES;
 		VALID_HORIZONTAL_SPAWN_OFFSETS = ImmutableList.of(new Vec3i(0, 0, -1), new Vec3i(-1, 0, 0), new Vec3i(0, 0, 1), new Vec3i(1, 0, 0), new Vec3i(-1, 0, -1), new Vec3i(1, 0, -1), new Vec3i(-1, 0, 1), new Vec3i(1, 0, 1));
-		VALID_SPAWN_OFFSETS = (new Builder()).addAll(VALID_HORIZONTAL_SPAWN_OFFSETS).addAll(VALID_HORIZONTAL_SPAWN_OFFSETS.stream().map(Vec3i::down).iterator()).addAll(VALID_HORIZONTAL_SPAWN_OFFSETS.stream().map(Vec3i::up).iterator()).add((new Vec3i(0, 1, 0))).build();
+		VALID_SPAWN_OFFSETS = (new Builder<Vec3i>()).addAll(VALID_HORIZONTAL_SPAWN_OFFSETS).addAll(VALID_HORIZONTAL_SPAWN_OFFSETS.stream().map(Vec3i::down).iterator()).addAll(VALID_HORIZONTAL_SPAWN_OFFSETS.stream().map(Vec3i::up).iterator()).add((new Vec3i(0, 1, 0))).build();
 
 		DispenserBlock.registerBehavior(Items.ENDER_PEARL, new FallibleItemDispenserBehavior() {
 			public ItemStack dispenseSilently(BlockPointer pointer, ItemStack stack) {
 				Direction direction = pointer.getBlockState().get(DispenserBlock.FACING);
-				BlockPos blockPos = pointer.getPos().offset(direction);
+				BlockPos blockPos = pointer.getBlockPos().offset(direction);
 				World world = pointer.getWorld();
 				BlockState blockState = world.getBlockState(blockPos);
 				this.setSuccess(true);

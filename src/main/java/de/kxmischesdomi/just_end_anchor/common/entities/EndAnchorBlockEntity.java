@@ -1,22 +1,15 @@
 package de.kxmischesdomi.just_end_anchor.common.entities;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.BlockEntityType;
+import de.kxmischesdomi.just_end_anchor.common.registry.ModBlockEntities;
+
 import net.minecraft.block.entity.EndPortalBlockEntity;
-import net.minecraft.util.math.BlockPos;
 
 /**
  * @author KxmischesDomi | https://github.com/kxmischesdomi
  * @since 1.0
  */
 public class EndAnchorBlockEntity extends EndPortalBlockEntity {
-
-	public EndAnchorBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
-		super(blockEntityType, blockPos, blockState);
+	public EndAnchorBlockEntity() {
+		super(ModBlockEntities.END_ANCHOR);
 	}
-
-	public EndAnchorBlockEntity(BlockPos pos, BlockState state) {
-		super(pos, state);
-	}
-
 }
