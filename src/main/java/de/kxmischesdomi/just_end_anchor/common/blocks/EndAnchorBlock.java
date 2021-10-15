@@ -131,18 +131,13 @@ public class EndAnchorBlock extends Block implements BlockEntityProvider {
 			}
 		};
 
-//		Explosion explosion = new Explosion(world, null, DamageSource.badRespawnPoint(), explosionBehavior, explodedPos.getX() + 0.5D, explodedPos.getY() + 0.5D, (double) explodedPos.getZ() + 0.5D, 5.0F, false, DestructionType.DESTROY);
-//		explosion.collectBlocksAndDamageEntities();
-
 		world.createExplosion(null, DamageSource.badRespawnPoint(), explosionBehavior, (double) explodedPos.getX() + 0.5D, (double) explodedPos.getY() + 0.5D, (double) explodedPos.getZ() + 0.5D, 5.0F, false, DestructionType.DESTROY);
 
-		List<EndermiteEntity> spawnedEndermites = Lists.newArrayList();
 
 		if (!world.isClient()) {
 
 			for (int i = 0; i < world.random.nextInt(12 - 6) + 6; i++) {
 				EndermiteEntity endermiteEntity = new EndermiteEntity(EntityType.ENDERMITE, world);
-				spawnedEndermites.add(endermiteEntity);
 				endermiteEntity.refreshPositionAndAngles(explodedPos.getX() + 0.5, explodedPos.getY(), explodedPos.getZ() + 0.5, 0, 0);
 				endermiteEntity.setVelocity(new Vec3d(world.random.nextDouble() * (world.random.nextBoolean() ? -1 : 1), world.random.nextDouble(), world.random.nextDouble() * (world.random.nextBoolean() ? -1 : 1)));
 				world.spawnEntity(endermiteEntity);
