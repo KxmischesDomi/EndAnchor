@@ -143,9 +143,7 @@ public class EndAnchorBlock extends Block implements BlockEntityProvider {
 			for (int i = 0; i < world.random.nextInt(12 - 6) + 6; i++) {
 				EndermiteEntity endermiteEntity = new EndermiteEntity(EntityType.ENDERMITE, world);
 				spawnedEndermites.add(endermiteEntity);
-				endermiteEntity.setPos(explodedPos.getX() + 0.5, explodedPos.getY(), explodedPos.getZ() + 0.5);
-				endermiteEntity.setBodyYaw(0);
-				endermiteEntity.pitch = 0;
+				endermiteEntity.refreshPositionAndAngles(explodedPos.getX() + 0.5, explodedPos.getY(), explodedPos.getZ() + 0.5, 0, 0);
 				endermiteEntity.setVelocity(new Vec3d(world.random.nextDouble() * (world.random.nextBoolean() ? -1 : 1), world.random.nextDouble(), world.random.nextDouble() * (world.random.nextBoolean() ? -1 : 1)));
 				world.spawnEntity(endermiteEntity);
 			}
