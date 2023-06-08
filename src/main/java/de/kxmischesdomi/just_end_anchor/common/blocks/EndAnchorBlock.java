@@ -19,7 +19,6 @@ import net.minecraft.tags.FluidTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.monster.Endermite;
 import net.minecraft.world.entity.player.Player;
@@ -27,7 +26,6 @@ import net.minecraft.world.entity.vehicle.DismountHelper;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.*;
-import net.minecraft.world.level.Explosion.BlockInteraction;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.DispenserBlock;
@@ -39,7 +37,6 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.level.material.FluidState;
-import net.minecraft.world.level.material.PushReaction;
 import net.minecraft.world.level.pathfinder.PathComputationType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
@@ -137,8 +134,7 @@ public class EndAnchorBlock extends Block implements EntityBlock {
 			}
 		};
 
-		world.explode(null, DamageSource.badRespawnPointExplosion(), explosionBehavior, (double) explodedPos.getX() + 0.5D, (double) explodedPos.getY() + 0.5D, (double) explodedPos.getZ() + 0.5D, 5.0F, false, BlockInteraction.DESTROY);
-
+		world.explode(null, world.damageSources().badRespawnPointExplosion(explodedPos.getCenter()), explosionBehavior, (double) explodedPos.getX() + 0.5D, (double) explodedPos.getY() + 0.5D, (double) explodedPos.getZ() + 0.5D, 5.0F, false, Level.ExplosionInteraction.BLOCK);
 
 		if (!world.isClientSide() && world.getGameRules().getBoolean(GameRules.RULE_DOMOBSPAWNING)) {
 
@@ -227,11 +223,6 @@ public class EndAnchorBlock extends Block implements EntityBlock {
 
 	public boolean isPathfindable(BlockState state, BlockGetter world, BlockPos pos, PathComputationType type) {
 		return false;
-	}
-
-	@Override
-	public PushReaction getPistonPushReaction(BlockState state) {
-		return PushReaction.BLOCK;
 	}
 
 	@Nullable

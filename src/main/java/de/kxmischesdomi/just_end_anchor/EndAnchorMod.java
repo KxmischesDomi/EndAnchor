@@ -13,7 +13,6 @@ public class EndAnchorMod implements ModInitializer {
 	public void onInitialize() {
 		ModItems.init();
 		ModBlockEntities.init();
-
 	}
 
 }

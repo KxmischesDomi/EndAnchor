@@ -2,14 +2,14 @@ package de.kxmischesdomi.just_end_anchor.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Matrix4f;
-import com.mojang.math.Vector4f;
 import de.kxmischesdomi.just_end_anchor.common.blocks.EndAnchorBlock;
 import de.kxmischesdomi.just_end_anchor.common.entities.EndAnchorBlockEntity;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider.Context;
 import net.minecraft.client.renderer.blockentity.TheEndPortalRenderer;
 import net.minecraft.core.Direction;
+import org.joml.Matrix4f;
+import org.joml.Vector4f;
 
 /**
  * @author KxmischesDomi | https://github.com/kxmischesdomi
@@ -40,8 +40,7 @@ public class EndAnchorBlockEntityRenderer<T extends EndAnchorBlockEntity> extend
 	}
 
 	VertexConsumer vertex(VertexConsumer vertexConsumer, Matrix4f matrix, float x, float y, float z) {
-		Vector4f vector4f = new Vector4f(x, y, z, 1.0F);
-		vector4f.transform(matrix);
+		Vector4f vector4f = matrix.transform(new Vector4f(x, y, z, 1.0f));
 		return vertexConsumer.vertex(vector4f.x(), vector4f.y(), vector4f.z());
 	}
 
